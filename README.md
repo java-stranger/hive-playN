@@ -9,3 +9,12 @@ Then use ```mvn package``` to create a jar file that you can run as usual:
 ```
 java -jar target/foobar.jar
 ```
+
+## Controls
+*Subject to changes!*
+```
+g - Show/hide coordinate grid
+Space - Make next (random) move
+u - Undo last move
+r - Reset (=new game)
+```
