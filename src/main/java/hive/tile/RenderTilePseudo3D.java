@@ -2,8 +2,8 @@ package hive.tile;
 
 import java.util.HashMap;
 
-import hive.view.Table;
-import hive.view.Tile;
+import main.java.hive.view.Table;
+import main.java.hive.view.Tile;
 import playn.core.GL20;
 import playn.core.Platform;
 import playn.scene.GroupLayer;

@@ -1,7 +1,7 @@
 package hive.layers;
 
-import hive.engine.Coordinate;
-import hive.view.TileGrid;
+import main.java.hive.engine.Coordinate;
+import main.java.hive.view.TileGrid;
 import playn.core.Canvas;
 import playn.core.Color;
 import playn.core.Font;

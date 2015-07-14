@@ -1,7 +1,7 @@
 package hive.render;
 
-import hive.engine.Game;
 import hive.layers.RenderGrid;
+import main.java.hive.engine.Game;
 import playn.core.Keyboard.KeyEvent;
 import playn.core.Keyboard.KeySlot;
 
