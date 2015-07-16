@@ -2,18 +2,15 @@ package hive.tile;
 
 import java.util.HashMap;
 
-import main.java.hive.view.Table;
-import main.java.hive.view.Tile;
+import hive.pieces.Piece;
 import playn.core.Color;
 import playn.scene.Layer;
 
 abstract public class RenderTile {
-	final protected Tile tile;
-	final protected Table view;
+	final protected Piece piece;
 	
-	RenderTile(Table view, Tile tile) {
-		this.tile = tile;
-		this.view = view;
+	RenderTile(Piece piece) {
+		this.piece = piece;
 	}
 
 	public abstract RenderTile registerLayers(HashMap<Layer, RenderTile> layersMap);
@@ -27,18 +24,16 @@ abstract public class RenderTile {
 	public void remove() {
 		layer().close();
 	}
-	
-	public Tile tile() {
-		return tile;
+
+	public Piece piece() {
+		return piece;
 	}
 	
 	public void setSelected(boolean enable) {
 		if(enable) {
 			layer().setTint(Color.rgb(128, 128, 128));
-			view.onTileSelected(tile);
 		} else {
 			layer().setTint(Color.rgb(255, 255, 255));
-			view.onTileSelected(null);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 package hive.layers;
 
-import main.java.hive.engine.Coordinate;
-import main.java.hive.view.TileGrid;
+import hive.engine.Coordinate;
+import hive.view.TileGrid;
 import playn.core.Canvas;
 import playn.core.Color;
 import playn.core.Font;
@@ -9,6 +9,7 @@ import playn.core.Platform;
 import playn.core.TextFormat;
 import playn.core.TextLayout;
 import playn.scene.CanvasLayer;
+import playn.scene.ImageLayer;
 
 public class RenderGrid {
 	public final CanvasLayer layer;
@@ -44,7 +45,8 @@ public class RenderGrid {
 			}
 		}
 		layer.end();
-		layer.setTranslation(tx, ty);
+	    layer.setOrigin(ImageLayer.Origin.CENTER);
+//		layer.setTranslation(tx, ty);
 		layer.setTint(Color.argb(192, 255, 255, 255));
 //		layer.setDepth(1);
 	}

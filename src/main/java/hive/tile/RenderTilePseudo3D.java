@@ -2,8 +2,7 @@ package hive.tile;
 
 import java.util.HashMap;
 
-import main.java.hive.view.Table;
-import main.java.hive.view.Tile;
+import hive.pieces.Piece;
 import playn.core.GL20;
 import playn.core.Platform;
 import playn.scene.GroupLayer;
@@ -14,11 +13,11 @@ public class RenderTilePseudo3D extends RenderTile {
 
 	final private GroupLayer layer = new GroupLayer();
 	
-	public RenderTilePseudo3D(Platform plat, Table view, GroupLayer parent, Tile tile, float tile_width) {
-		super(view, tile);
+	public RenderTilePseudo3D(Platform plat, GroupLayer parent, Piece piece, float tile_width) {
+		super(piece);
 		
-		String filename_icon = tile.getPiece().getType().toString().toLowerCase() + ".png";
-		String filename_bg = tile.getPiece().color().toString().toLowerCase() + ".png";
+		String filename_icon = piece.getType().toString().toLowerCase() + ".png";
+		String filename_bg = piece.color().toString().toLowerCase() + ".png";
 		
 		ImageLayer bg = TextureCache.createImageLayerFromResource(plat.assets(), 
 				filename_bg, tile_width, GL20.GL_LINEAR_MIPMAP_LINEAR);

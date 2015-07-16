@@ -24,7 +24,8 @@ public class BgLayer {
 	    			float scale = h / (image.height() * 10); 
 	    		    layer.setScale(scale);
 	    		    layer.setSize(2*w / scale, 2*h / scale);
-	    		    layer.setTranslation( -w, -h);
+	    		    layer.setOrigin(ImageLayer.Origin.CENTER);
+//	    		    layer.setTranslation( -w, -h);
 	    		}
 	    	}
 	    ;});

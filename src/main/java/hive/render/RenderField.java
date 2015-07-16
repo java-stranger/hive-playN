@@ -1,24 +1,25 @@
 package hive.render;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import hive.engine.Coordinate;
 import hive.layers.BgLayer;
 import hive.layers.RenderGrid;
+import hive.pieces.Piece;
 import hive.tile.HighlightCellFactory;
 import hive.tile.RenderTile;
 import hive.tile.RenderTilePseudo3D;
 import hive.tile.RenderTileSprites;
-import main.java.hive.engine.Coordinate;
-import main.java.hive.view.Renderer;
-import main.java.hive.view.Renderer.HighlightType;
-import main.java.hive.view.Table;
-import main.java.hive.view.Tile;
-import main.java.hive.view.TileGrid;
+import hive.view.Renderer;
+import hive.view.Table;
+import hive.view.Tile;
+import hive.view.TileGrid;
 import playn.core.Color;
 import playn.core.Event.XY;
-import playn.core.Input;
 import playn.scene.GroupLayer;
+import playn.scene.ImageLayer;
 import playn.scene.Layer;
 import playn.scene.LayerUtil;
 import playn.scene.Pointer;
@@ -41,14 +42,13 @@ public class RenderField implements Renderer {
 	
 	final TileGrid grid;
 	
-	HashMap<Tile, RenderTile> tileCache = new HashMap<>();
+	HashMap<Coordinate, ArrayList<RenderTile>> tileCache = new HashMap<>();
 	HashMap<Layer, RenderTile> layerToTile = new HashMap<>();
 	
 	final HighlightCellFactory highlightCellFactory;
 	
-	final Selection selection;
+	final Selection selection = new Selection();
 	final KeyboardSlot keyboard;
-    final Input input = new Input();
 	
 	XY drag_start;
 	Vector current_translation = new Vector();
@@ -63,18 +63,19 @@ public class RenderField implements Renderer {
 		this.view = table;
 		this.scene = scene;
 		
-		selection = new Selection(layerToTile);
+		float w = scene.plat.graphics().viewSize.width();
+		float h = scene.plat.graphics().viewSize.height();
+		
+	    masterLayer.setSize(w, h);
+	    masterLayer.setTranslation(w / 2.f, h / 2.f);
+//	    masterLayer.setOrigin(ImageLayer.Origin.CENTER);
 		
 		masterLayer.add(interactiveLayer);
 		interactiveLayer.setDepth(1);
 		masterLayer.add(highlightLayer);
 		highlightLayer.setDepth(500);
 		scene.rootLayer.add(masterLayer);
-		
 
-		float w = scene.plat.graphics().viewSize.width();
-		float h = scene.plat.graphics().viewSize.height();
-		
 		// calculate the tile size in pixels, so the whole field is visible
 		tileSize = Math.min(w / view.field.width(), h / view.field.height() * 2 / (float)Math.sqrt(3));
 		// initialize tile-to-pixel coordinate conversion
@@ -86,9 +87,7 @@ public class RenderField implements Renderer {
 	    highlightCellFactory = new HighlightCellFactory(scene.plat, tileSize / 2);
 		
 		// set size & translation (so that (0,0) is the center of the window) of the master layer
-	    masterLayer.setSize(w, h);
-	    masterLayer.setTranslation(w / 2.f, h / 2.f);
-	    interactiveLayer.setSize(w, h);
+		interactiveLayer.setSize(w, h);
 	    //interactiveLayer.setTranslation(w / 2.f, h / 2.f);
 
 	    // create, set size & translation of the background layer
@@ -101,9 +100,7 @@ public class RenderField implements Renderer {
 	    gridShow.layer.setDepth(10);
 	    masterLayer.add(gridShow.layer);
 	    
-	    keyboard = new KeyboardSlot(gridShow, table.game);
-	    scene.plat.input().keyboardEvents.connect(keyboard);
-	    
+	    keyboard = new KeyboardSlot(scene.plat.input(), gridShow, table.game);
 	    
 		// combine mouse and touch into pointer events
 		pointer = new Pointer(scene.plat, interactiveLayer, false);
@@ -114,12 +111,12 @@ public class RenderField implements Renderer {
 	        if (event.kind.isStart) { 
 	        	drag_start = event;
 	        	masterLayer.translation(current_translation);
-	        	if(highlightLayer != LayerUtil.layerUnderPoint(highlightLayer, event.x - current_translation.x, event.y - current_translation.y)) {
+	        	if(null != LayerUtil.layerUnderPoint(masterLayer, event.x - current_translation.x, event.y - current_translation.y)) {
 	        		System.out.println("Clicked at (" + event + ") translated to " + grid.grid(event.x - current_translation.x, event.y - current_translation.y));
 	        		view.onClick(grid.grid(event.x - current_translation.x, event.y - current_translation.y));
 	        	}
-	        	Layer layer = LayerUtil.layerUnderPoint(interactiveLayer, event.x - current_translation.x, event.y - current_translation.y);
-	        	selection.select(layer == interactiveLayer ? null : layer);
+//	        	Layer layer = LayerUtil.layerUnderPoint(interactiveLayer, event.x - current_translation.x, event.y - current_translation.y);
+//	        	selection.select(layer == interactiveLayer ? null : layer);
 //	        	((Main)scene).game.nextMove();
 	        } else if (event.kind.isEnd) {
 	        	masterLayer.translation(current_translation);
@@ -144,16 +141,29 @@ public class RenderField implements Renderer {
 	    });
 	}
 	
-	public void render(Tile t) {
-		RenderTile rtile = tileCache.computeIfAbsent(t, (Tile) -> createTileRenderer(t).registerLayers(layerToTile));
-		rtile.moveTo(grid.pixelX(t.position()), grid.pixelY(t.position()));
+	public void newPiece(Piece p, Coordinate c) {
+		RenderTile rtile = createTileRenderer(p).registerLayers(layerToTile);
+		insertAndMove(rtile, c);
+	}
+
+	public void insertAndMove(RenderTile rtile, Coordinate c) {
+		tileCache.computeIfAbsent(c, (Coordinate x) -> new ArrayList<RenderTile>()).add(rtile);
+		rtile.moveTo(grid.pixelX(c), grid.pixelY(c));
 //		System.out.println("Added tile @ " + t.getX() + "," + t.getY() + " in field " + this + " tile size" + tileSize);
 	}
-	
-	public void forget(Tile t) {
-		tileCache.remove(t).remove();
+
+	public RenderTile removePiece(Piece p, Coordinate c) {
+		for(int i = tileCache.get(c).size() - 1; i >= 0; ++i) {
+			if(tileCache.get(c).get(i).piece().equals(p))
+				return tileCache.get(c).remove(i);
+		}
+		return null;
 	}
-	
+
+	public void movePiece(Piece p, Coordinate from, Coordinate to) {
+		insertAndMove(removePiece(p, from), to);
+	}
+
 	final static HashMap<HighlightType, Integer > highlightColors = new HashMap<>();
 	static {
 		highlightColors.put(HighlightType.MY_MOVES, Color.argb(255, 0, 255, 0));
@@ -170,11 +180,19 @@ public class RenderField implements Renderer {
 		});
 	}
 
-	RenderTile createTileRenderer(Tile t) {
+	RenderTile createTileRenderer(Piece p) {
 		if(rendererType == RendererType.PSEUDO_3D) {
-			return new RenderTilePseudo3D(scene.plat, view, interactiveLayer, t, tileSize);			
+			return new RenderTilePseudo3D(scene.plat, interactiveLayer, p, tileSize);			
 		} else {
-			return new RenderTileSprites(scene.plat, view, interactiveLayer, t, tileSize);
+			return new RenderTileSprites(scene.plat, interactiveLayer, p, tileSize);
+		}
+	}
+	
+	public void select(Coordinate c) {
+		if(tileCache.get(c) != null) {
+			selection.select(tileCache.get(c).get(tileCache.get(c).size() - 1));
+		} else {
+			selection.select(null);
 		}
 	}
 }

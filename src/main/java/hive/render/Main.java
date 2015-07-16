@@ -1,6 +1,6 @@
 package hive.render;
 
-import main.java.hive.engine.Game;
+import hive.engine.Game;
 import playn.core.Platform;
 import playn.java.JavaAssets;
 import playn.java.LWJGLPlatform;
@@ -13,8 +13,6 @@ public class Main extends SceneGame {
 	
 	public Main(Platform plat) {
 		super(plat, 25);
-		
-		plat.assets().getImage("images/black.png");
 		
 		((JavaAssets) plat.assets()).setPathPrefix("images");
 		
