@@ -9,7 +9,7 @@ import react.Slot;
 public class BgLayer {
 	
 	public final ImageLayer layer = new ImageLayer();
-	private static final String texture = "wood.jpg";
+	private static final String texture = "images/common/wood.jpg";
 
 	public BgLayer(Platform plat, float w, float h) {
 		

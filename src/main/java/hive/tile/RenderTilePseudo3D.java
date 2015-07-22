@@ -1,7 +1,5 @@
 package hive.tile;
 
-import java.util.HashMap;
-
 import hive.pieces.Piece;
 import playn.core.GL20;
 import playn.core.Platform;
@@ -13,31 +11,30 @@ public class RenderTilePseudo3D extends RenderTile {
 
 	final private GroupLayer layer = new GroupLayer();
 	
+	final static private String prefix = "images/pseudo3d/";
+	
 	public RenderTilePseudo3D(Platform plat, GroupLayer parent, Piece piece, float tile_width) {
 		super(piece);
 		
-		String filename_icon = piece.getType().toString().toLowerCase() + ".png";
-		String filename_bg = piece.color().toString().toLowerCase() + ".png";
-		
 		ImageLayer bg = TextureCache.createImageLayerFromResource(plat.assets(), 
-				filename_bg, tile_width, GL20.GL_LINEAR_MIPMAP_LINEAR);
+				getBgFilename(piece), tile_width, GL20.GL_LINEAR_MIPMAP_LINEAR);
 		layer.add(bg.setDepth(5));
 
 		ImageLayer icon = TextureCache.createImageLayerFromResource(plat.assets(), 
-				filename_icon, tile_width, GL20.GL_LINEAR_MIPMAP_NEAREST);
+				getIconFilename(piece), tile_width, GL20.GL_LINEAR_MIPMAP_NEAREST);
 		layer.add(icon.setDepth(5.1f));
 
 		parent.add(layer);
 	}
 	
-	
-	@Override
-	public RenderTile registerLayers(HashMap<Layer, RenderTile> layersMap) {
-		// register all children layers to refer to us
-		layer.forEach((Layer l) -> layersMap.put(l, this));
-		return this;
+	public static String getIconFilename(Piece piece) {
+		return prefix + piece.getType().toString().toLowerCase() + ".png";
 	}
-	
+		
+	public static String getBgFilename(Piece piece) {
+		return prefix + piece.color().toString().toLowerCase() + ".png";
+	}
+		
 	@Override
 	public Layer layer() {
 		return layer;

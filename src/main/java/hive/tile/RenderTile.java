@@ -1,7 +1,5 @@
 package hive.tile;
 
-import java.util.HashMap;
-
 import hive.pieces.Piece;
 import playn.core.Color;
 import playn.scene.Layer;
@@ -13,7 +11,6 @@ abstract public class RenderTile {
 		this.piece = piece;
 	}
 
-	public abstract RenderTile registerLayers(HashMap<Layer, RenderTile> layersMap);
 	public abstract Layer layer();
 	
 	public void moveTo(float x, float y) {

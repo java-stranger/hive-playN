@@ -9,11 +9,11 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-import hive.engine.Game;
+import hive.engine.IController;
 
 public class MainMenu {
 
-	MainMenu(Shell shell, Game game) {
+	MainMenu(Shell shell, IController control) {
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		
 		MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
@@ -36,7 +36,7 @@ public class MainMenu {
 				FileDialog fd = new FileDialog(shell, SWT.OPEN);
 				String filename = fd.open(); 
 				if(filename != null) {
-					game.loadPosition(filename);
+					control.loadPosition(filename);
 				}
 			}
 		});
@@ -47,7 +47,7 @@ public class MainMenu {
 				FileDialog fd = new FileDialog(shell, SWT.SAVE);
 				String filename = fd.open(); 
 				if(filename != null) {
-					game.savePosition(filename);
+					control.savePosition(filename);
 				}
 			}
 		});

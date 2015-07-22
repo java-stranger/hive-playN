@@ -18,7 +18,7 @@ public class TextureCache {
 		ImageLayer layer = new ImageLayer();
 		RFuture<Texture> tx = textureCache.computeIfAbsent(res_name, 
 				(String path) -> {
-					Image im = assets.getImageSync(path);
+					Image im = assets.getImage(path);
 					im.setConfig(new Texture.Config(true, false, false, resampling_method, resampling_method, true));
 					return im.textureAsync();
 				});
@@ -31,5 +31,9 @@ public class TextureCache {
 		layer.setTile(tx);
 		layer.setOrigin(ImageLayer.Origin.CENTER);
 		return layer;
+	}
+	
+	public static Image getImage(Assets assets, String path) {
+		return assets.getImage(path);
 	}
 }
