@@ -25,7 +25,7 @@ public class RenderTilePseudo3D extends RenderTile {
 
 		ImageLayer icon = TextureCache.createImageLayerFromResource(plat.assets(), 
 				filename_icon, tile_width, GL20.GL_LINEAR_MIPMAP_NEAREST);
-		layer.add(icon.setDepth(6));
+		layer.add(icon.setDepth(5.1f));
 
 		parent.add(layer);
 	}

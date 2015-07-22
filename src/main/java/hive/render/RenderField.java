@@ -100,7 +100,7 @@ public class RenderField implements Renderer {
 	    gridShow.layer.setDepth(10);
 	    masterLayer.add(gridShow.layer);
 	    
-	    keyboard = new KeyboardSlot(scene.plat.input(), gridShow, table.game);
+	    keyboard = new KeyboardSlot(scene.plat.input(), gridShow, table.game, scene.plat);
 	    
 		// combine mouse and touch into pointer events
 		pointer = new Pointer(scene.plat, interactiveLayer, false);
@@ -149,11 +149,14 @@ public class RenderField implements Renderer {
 	public void insertAndMove(RenderTile rtile, Coordinate c) {
 		tileCache.computeIfAbsent(c, (Coordinate x) -> new ArrayList<RenderTile>()).add(rtile);
 		rtile.moveTo(grid.pixelX(c), grid.pixelY(c));
+		if(tileCache.get(c).size() > 1) {
+			rtile.layer().setDepth(tileCache.get(c).get(tileCache.get(c).size() - 2).layer().depth() + 1); // put it on top
+		}
 //		System.out.println("Added tile @ " + t.getX() + "," + t.getY() + " in field " + this + " tile size" + tileSize);
 	}
 
 	public RenderTile removePiece(Piece p, Coordinate c) {
-		for(int i = tileCache.get(c).size() - 1; i >= 0; ++i) {
+		for(int i = tileCache.get(c).size() - 1; i >= 0; --i) {
 			if(tileCache.get(c).get(i).piece().equals(p))
 				return tileCache.get(c).remove(i);
 		}
@@ -168,6 +171,7 @@ public class RenderField implements Renderer {
 	static {
 		highlightColors.put(HighlightType.MY_MOVES, Color.argb(255, 0, 255, 0));
 		highlightColors.put(HighlightType.ADVERSARY_MOVES, Color.argb(255, 255, 0, 255));
+		highlightColors.put(HighlightType.BORDER, Color.argb(255, 0, 0, 255));
 	}
 
 	@Override
@@ -195,4 +199,11 @@ public class RenderField implements Renderer {
 			selection.select(null);
 		}
 	}
+	
+	public void reset() {
+		tileCache.values().forEach((ArrayList<RenderTile> array) 
+				-> array.forEach((RenderTile tile) 
+						-> tile.remove()));;
+	}
+
 }

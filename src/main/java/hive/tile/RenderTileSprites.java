@@ -2,8 +2,9 @@ package hive.tile;
 
 import java.util.HashMap;
 
-import hive.engine.Player.Color;
 import hive.pieces.Piece;
+import hive.player.IPlayer;
+import hive.player.IPlayer.Color;
 import playn.core.GL20;
 import playn.core.Platform;
 import playn.scene.GroupLayer;
@@ -17,7 +18,7 @@ public class RenderTileSprites extends RenderTile {
 		super(piece);
 		
 		String filename = piece.toString().toLowerCase() 
-				+ (piece.color() == Color.WHITE ? "_w" : "_b") + ".png";
+				+ (piece.color() == IPlayer.Color.WHITE ? "_w" : "_b") + ".png";
 		
 		layer = TextureCache.createImageLayerFromResource(plat.assets(), 
 				filename, tile_width, GL20.GL_LINEAR_MIPMAP_NEAREST);

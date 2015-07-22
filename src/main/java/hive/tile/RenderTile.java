@@ -17,7 +17,7 @@ abstract public class RenderTile {
 	public abstract Layer layer();
 	
 	public void moveTo(float x, float y) {
-		System.out.println("Moving tile to " + x + "," + y);
+//		System.out.println("Moving tile to " + x + "," + y);
 		layer().setTranslation(x, y);
 	}
 	
