@@ -16,5 +16,6 @@ java -jar target/foobar.jar
 g - Show/hide coordinate grid
 Space - Make next (random) move
 u - Undo last move
-r - Reset (=new game)
+n - New game
+y - Change view theme (cycling between existing)
 ```
