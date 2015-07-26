@@ -1,13 +1,10 @@
 package hive.swt;
 
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Layout;
 
 import common.Main;
 import hive.main.MainApp;
@@ -29,14 +26,15 @@ public class App {
 		SWTPlatform plat = new SWTPlatform(config) {
 			protected void preInit() {
 				super.preInit();
-				shell().setLayout(new RowLayout());
-				shell().setLayoutData(new RowData(100, 20));
 
-				Button b = new Button(shell(), SWT.PUSH);
-				b.setText("Push me!");
-				b.setSize(100, 20);
-				
 				new MainMenu(shell(), app.controller());
+				new MoveList(shell(), app.controller());
+
+				GridLayout layout = new GridLayout();
+				layout.numColumns = 2;
+				shell().setLayout(layout);
+//				shell().setLayoutData(new RowData(100, 200));
+
 			};
 		};
 		
